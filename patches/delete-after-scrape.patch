@@ -1,0 +1,30 @@
+diff --git a/collector/collector.go b/collector/collector.go
+index 6172bae..d18ade6 100644
+--- a/collector/collector.go
++++ b/collector/collector.go
+@@ -210,8 +210,15 @@ func (c *graphiteCollector) processSamples() {
+ 	}
+ }
+ 
++// clearSamples clears the samples map after scraping
++func (c *graphiteCollector) clearSamples() {
++	var length = len(c.samples)
++	c.samples = make(map[string]*graphiteSample)
++	c.logger.Info("Removed " + strconv.Itoa(length) + " metrics after scraping")
++}
++
+ // Collect implements prometheus.Collector.
+-func (c graphiteCollector) Collect(ch chan<- prometheus.Metric) {
++func (c *graphiteCollector) Collect(ch chan<- prometheus.Metric) {
+ 	c.lastProcessed.Collect(ch)
+ 	c.sampleExpiryMetric.Collect(ch)
+ 	c.tagParseFailures.Collect(ch)
+@@ -221,6 +228,8 @@ func (c graphiteCollector) Collect(ch chan<- prometheus.Metric) {
+ 	for _, sample := range c.samples {
+ 		samples = append(samples, sample)
+ 	}
++	// clear samples after scraping
++	c.clearSamples()
+ 	c.mu.Unlock()
+ 
+ 	ageLimit := time.Now().Add(-c.sampleExpiry)
