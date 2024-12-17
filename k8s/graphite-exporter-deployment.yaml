@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphite-exporter-ephemeral
+#  namespace: monitoring
+  labels:
+    app: graphite-exporter-ephemeral
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphite-exporter-ephemeral
+  template:
+    metadata:
+      labels:
+        app: graphite-exporter-ephemeral
+    spec:
+      containers:
+      - name: graphite-exporter-ephemeral
+        image: <your_image>
+        ports:
+        - name: metrics-tcp
+          containerPort: 9108
+          protocol: TCP
+        - name: graphite-tcp
+          containerPort: 9109
+          protocol: TCP
+        - name: graphite-udp
+          containerPort: 9109
+          protocol: UDP

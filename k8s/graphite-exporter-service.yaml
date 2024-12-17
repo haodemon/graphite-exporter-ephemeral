@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphite-exporter-ephemeral
+#  namespace: monitoring
+  labels:
+    app: graphite-exporter-ephemeral
+spec:
+  selector:
+    app: graphite-exporter-ephemeral
+  ports:
+    - name: metrics-tcp
+      protocol: TCP
+      port: 9108
+      targetPort: 9108
+    - name: graphite-tcp
+      protocol: TCP
+      port: 9109
+      targetPort: 9109
+    - name: graphite-udp
+      protocol: UDP
+      port: 9109
+      targetPort: 9109
+  type: ClusterIP
